@@ -2,7 +2,6 @@ from sklearn.naive_bayes import MultinomialNB
 from sklearn.svm import SVC
 from sklearn.neural_network import MLPClassifier
 from sklearn.linear_model import LogisticRegression
-# Add CNN and RNN using a framework like TensorFlow or PyTorch
 
 # Naive Bayes
 def get_naive_bayes():
@@ -20,4 +19,4 @@ def get_mlp():
 def get_logistic_regression():
     return LogisticRegression(max_iter=1000)
 
-# Add CNN/RNN methods when ready
+# cnn/rnn or no? - TensorFlow or PyTorch
