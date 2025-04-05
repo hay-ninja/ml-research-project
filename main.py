@@ -4,27 +4,24 @@ from modules.metrics import evaluate_model
 
 def main():
     print("Successfully running.")
-    # Update the path to your dataset here
+
     file_path = r"C:\Users\hayre\OneDrive\Documents\vscode\ml_method\data\tweet_emotions.csv"
     
-    # Load and preprocess the data
     data = load_data(file_path)
     data, label_encoder = preprocess_data(data)
 
-    # Split the data into training and testing
     X_train, X_test, y_train, y_test = split_data(data)
 
-    # Feature extraction - TF-IDF
+    # TF-IDF Feature Extraction
     X_train_tfidf, X_test_tfidf, tfidf_vectorizer = tfidf_transform(X_train, X_test)
 
     # Load GloVe embeddings
-    glove_file_path = r'C:\Users\hayre\OneDrive\Documents\vscode\glove.6B\glove.6B.100d.txt'  # Updated path
-    glove_embeddings = load_glove_embeddings(glove_file_path, embedding_dim=100)  # Change dimension if needed
+    glove_file_path = r'C:\Users\hayre\OneDrive\Documents\vscode\glove.6B\glove.6B.100d.txt'
+    glove_embeddings = load_glove_embeddings(glove_file_path, embedding_dim=100)
 
-    # Feature extraction - GloVe Embedding
+    # GloVe Feature Extraction
     X_train_embed, X_test_embed = glove_embedding_transform(X_train, X_test, glove_embeddings, embedding_dim=100)
 
-    # Select classifiers (excluding Naive Bayes for GloVe embeddings)
     classifiers = {
         'Naive Bayes': get_naive_bayes(),
         'SVM': get_svm(),
@@ -32,25 +29,22 @@ def main():
         'Logistic Regression': get_logistic_regression()
     }
 
-    # Evaluate classifiers for both feature selectors
     for feature_selector, (X_train_feat, X_test_feat) in [
         ('TF-IDF', (X_train_tfidf, X_test_tfidf)),
-        ('GloVe Embedding', (X_train_embed, X_test_embed))  # Changed to use GloVe embeddings
+        ('GloVe Embedding', (X_train_embed, X_test_embed))
     ]:
         print(f"\nEvaluating using {feature_selector}...")
 
         for clf_name, clf in classifiers.items():
-            # Skip Naive Bayes for GloVe embeddings
             if feature_selector == 'GloVe Embedding' and clf_name == 'Naive Bayes':
                 continue
 
             print(f"\nTraining {clf_name}...")
             clf.fit(X_train_feat, y_train)
-            
-            # Predictions and evaluation
+
             y_pred_all = clf.predict(X_test_feat)
             accuracy, precision, recall, f1 = evaluate_model(y_test, y_pred_all)
-            print(f"{feature_selector} - {clf_name} - Final Accuracy: {accuracy:.4f}, Precision: {precision:.4f}, Recall: {recall:.4f}, F1: {f1:.4f}")
+            print(f"{feature_selector} - {clf_name} - Accuracy: {accuracy:.4f}, Precision: {precision:.4f}, Recall: {recall:.4f}, F1: {f1:.4f}")
 
 if __name__ == "__main__":
     main()
