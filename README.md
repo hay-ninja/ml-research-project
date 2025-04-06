@@ -16,3 +16,5 @@ After making changes (before switching devices)
 git add .
 git commit -m "Describe your changes here"
 git push origin main
+
+god i just use the commands..
